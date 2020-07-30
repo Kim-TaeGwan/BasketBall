@@ -19,9 +19,25 @@
 // getElementsByTagName() : 태그 이름이 일치하는 엘리먼트를 찾는다.
 // querySelectorAll() : 셀렉터에 해당하는 엘리먼트를 찾는다.
 
+/*
+    컴퓨터 AI조작
+    
+    1. 컴퓨터의 기본 슛 확률은 다음과 같다. 2점슛(50%), 3점슛(33%)
+    2. 사용자에게 6점 이상 지고 있을 경우, 슛 확률을 각각 60%, 38%로 올린다.
+    3. 사용자에게 10점 이상 지고 있을 경우, 슛 확률을 각각 70%, 43%로 올린다.
+    4. 반대로, 사용자에게 6점 이상 이기고 있을 경우, 슛 확률을 각각 40%, 28%로 내린다.
+    5. 사용자에게 10점 이상 이기고 있을 경우, 슛 확률을 각각 30%, 23%로 내린다.
+*/
+
 
 let comScore = 0;
+let comPercent2 = 0.5; // 2점슛 확률(조작)
+let comPercent3 = 0.33; // 3점슛 확률(조작)
+
 let userScore = 0;
+let userPercent2 = 0.5; // 2점슛 확률(조작)
+let userPercent3 = 0.33; // 3점슛 확률(조작)
+
 let isComputerTurn = true; // 현재 컴퓨터의 차례인지, 첫슛을 컴퓨터가 쏘기위해 true
 let shotsLeft = 15;
 
@@ -65,7 +81,8 @@ const onComputerShoot = () => {
     const shootType = Math.random() < 0.5 ? 2 : 3;
 
     if(shootType === 2){
-        if(Math.random() < 0.5) {
+        // if(Math.random() < 0.5) {
+        if(Math.random() < comPercent2) {
             // 2점슛 1/2 확률로 성공
             showText("컴퓨터가 2점슛을 성공시켰습니다!");
             updateComputerScore(2);
@@ -75,7 +92,8 @@ const onComputerShoot = () => {
             showText("컴퓨터가 2점슛을 실패하였습니다!");
         }
     } else{
-        if(Math.random() < 0.33){
+        // if(Math.random() < 0.33){
+        if(Math.random() < comPercent3){
             // 3점슛 1/3확률로 성공
             showText("컴퓨터가 3점슛을 성공시켰습니다!");
             updateComputerScore(3);
