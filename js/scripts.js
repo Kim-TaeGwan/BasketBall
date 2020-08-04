@@ -70,11 +70,29 @@ const disableUserButtons = (flag) => {
         userButtons[i].disabled = flag;
     }
 }
+const updateAI = () => {
+    let diff = userScore - comScore; //사용자의 점수에서 컴퓨터의 점수를 뺀 값(diff)
+
+    if(diff >= 6){ // diff가 6이상일 경우
+        comPercent2 = 0.6;
+        comPercent3 = 0.38;
+    } else if(diff >= 10){ // diff가 10이상일 경우
+        comPercent2 = 0.7;
+        comPercent3 = 0.43;
+    }else if(diff <= -6){ //diff가 -6이하일 경우
+        comPercent2 = 0.4;
+        comPercent3 = 0.28;
+    } else if(diff <= -10){ // diff가 -10이하일 경우
+        comPercent2 = 0.3;
+        comPercent3 = 0.23;
+    }
+}
 
 const onComputerShoot = () => {
     if(!isComputerTurn){ // 컴퓨터의 차례가 아니라면 슛 로직을 실행하지 않고 함수에서 리턴
         return;
-    }    
+    }  
+    updateAI();  
     /*
         2점슛이 성공할 확률은 50%, 3점슛이 성공할 확률은 33% 
      */
@@ -121,7 +139,7 @@ const onUserShoot = (shootType) => {
     }
 
     if(shootType === 2){ // shootType이 2점슛이면 2,
-        if(Math.random() < 0.5) {
+        if(Math.random() < userPercent2) {
             // 2점슛 1/2 확률로 성공
             showText("사용자가 2점슛을 성공시켰습니다!");
             updateUserScore(2)
@@ -131,7 +149,7 @@ const onUserShoot = (shootType) => {
             showText("사용자가 2점슛을 실패하였습니다!");
         }
     } else{ // shootType이 3점슛이면 3,
-        if(Math.random() < 0.33){
+        if(Math.random() < userPercent3){
             // 3점슛 1/3확률로 성공
             showText("사용자가 3점슛을 성공시켰습니다!");
             updateUserScore(3)
