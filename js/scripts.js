@@ -29,101 +29,106 @@
     5. 사용자에게 10점 이상 이기고 있을 경우, 슛 확률을 각각 30%, 23%로 내린다.
 */
 
+// 컴퓨터 오브젝트
+const computer = {
+    score: 0,
+    percent2: 0.5, // 2점슛 확률(조작)
+    percent3: 0.33 // 3점슛 확률(조작)
+};
 
-let comScore = 0;
-let comPercent2 = 0.5; // 2점슛 확률(조작)
-let comPercent3 = 0.33; // 3점슛 확률(조작)
+// 사용자 오브젝트
+const user = {
+    score: 0,
+    percent2: 0.5, // 2점슛 확률(조작)
+    percent3: 0.33 // 3점슛 확률(조작)
+}
 
-let userScore = 0;
-let userPercent2 = 0.5; // 2점슛 확률(조작)
-let userPercent3 = 0.33; // 3점슛 확률(조작)
-
-let isComputerTurn = true; // 현재 컴퓨터의 차례인지, 첫슛을 컴퓨터가 쏘기위해 true
-let shotsLeft = 15;
+// 게임 오브젝트
+const game = {
+    isComputerTurn : true, // 현재 컴퓨터의 차례인지, 첫슛을 컴퓨터가 쏘기위해 true
+    shotsLeft : 15
+}
 
 const showText = (s) => {
-    const textElem = document.getElementById('text');
-    textElem.innerHTML = s;
+    // const textElem = document.getElementById('text');
+    const $textElem = $("#text");
+    $textElem.fadeOut();
+
+    // textElem.innerHTML = s;
+    $textElem.html(s);
+    $textElem.fadeIn();
 }
 const updateComputerScore = (score) => {
-    comScore += score;
-    const comScoreElem = document.getElementById('computer-score');
-    comScoreElem.innerHTML = comScore;
+    computer.score += score;
+    // const comScoreElem = document.getElementById('computer-score');
+    const $comScoreElem = $("#computer-score");
+
+    // comScoreElem.innerHTML = computer.score;
+    $comScoreElem.html(computer.score);
 }
 const updateUserScore = (score) => {
-    userScore += score;
-    const userScoreElem = document.getElementById('user-score');
-    userScoreElem.innerHTML = userScore;
-}
-const dusableComputerButtons = (flag) => {
-    
-    const computerButtons = document.getElementsByClassName('btn-computer');
+    user.score += score;
+    // const userScoreElem = document.getElementById('user-score');
+    const $userScoreElem = $("#user-score");
 
-    for(let i = 0; i < computerButtons.length; i++){
-        computerButtons[i].disabled = flag;
-    }
+    // userScoreElem.innerHTML = user.score;
+    $userScoreElem.html(user.score);
+}
+const disableComputerButtons = (flag) => {
+    
+    // const computerButtons = document.getElementsByClassName('btn-computer');
+
+    // for(let i = 0; i < computerButtons.length; i++){
+    //     computerButtons[i].disabled = flag;
+    // }
+    $(".btn-computer").prop('disabled', flag);
 }
 const disableUserButtons = (flag) => {
-    const userButtons = document.getElementsByClassName('btn-user');
+    // const userButtons = document.getElementsByClassName('btn-user');
 
-    for(let i = 0; i < userButtons.length; i++){
-        userButtons[i].disabled = flag;
-    }
+    // for(let i = 0; i < userButtons.length; i++){
+    //     userButtons[i].disabled = flag;
+    // }
+    $(".btn-user").prop('disabled', flag);
 }
 const updateAI = () => {
-    let diff = userScore - comScore; //사용자의 점수에서 컴퓨터의 점수를 뺀 값(diff)
+    let diff = user.score - computer.score; //사용자의 점수에서 컴퓨터의 점수를 뺀 값(diff)
 
-    if(diff >= 6){ // diff가 6이상일 경우
-        comPercent2 = 0.6;
-        comPercent3 = 0.38;
-    } else if(diff >= 10){ // diff가 10이상일 경우
-        comPercent2 = 0.7;
-        comPercent3 = 0.43;
-    }else if(diff <= -6){ //diff가 -6이하일 경우
-        comPercent2 = 0.4;
-        comPercent3 = 0.28;
-    } else if(diff <= -10){ // diff가 -10이하일 경우
-        comPercent2 = 0.3;
-        comPercent3 = 0.23;
+    if(diff >= 10){ // diff가 10이상일 경우
+        computer.percent2 = 0.7;
+        computer.percent3 = 0.45;
+    } else if(diff >= 6){ // diff가 6이상일 경우
+        computer.percent2 = 0.6;
+        computer.percent3 = 0.38;
+    }else if(diff <= -10){ //diff가 -10이하일 경우
+        computer.percent2 = 0.3;
+        computer.percent3 = 0.23;
+    } else if(diff <= -6){ // diff가 -6이하일 경우
+        computer.percent2 = 0.4;
+        computer.percent3 = 0.28;
     }
 }
 
 const onComputerShoot = () => {
-    if(!isComputerTurn){ // 컴퓨터의 차례가 아니라면 슛 로직을 실행하지 않고 함수에서 리턴
+    if(!game.isComputerTurn){ // 컴퓨터의 차례가 아니라면 슛 로직을 실행하지 않고 함수에서 리턴
         return;
     }  
     updateAI();  
     /*
         2점슛이 성공할 확률은 50%, 3점슛이 성공할 확률은 33% 
      */
-    const shootType = Math.random() < 0.5 ? 2 : 3;
+    let shootType = Math.random() < 0.5 ? 2 : 3;
 
-    if(shootType === 2){
-        // if(Math.random() < 0.5) {
-        if(Math.random() < comPercent2) {
-            // 2점슛 1/2 확률로 성공
-            showText("컴퓨터가 2점슛을 성공시켰습니다!");
-            updateComputerScore(2);
-
-        }else {
-            // 실패 시
-            showText("컴퓨터가 2점슛을 실패하였습니다!");
-        }
-    } else{
-        // if(Math.random() < 0.33){
-        if(Math.random() < comPercent3){
-            // 3점슛 1/3확률로 성공
-            showText("컴퓨터가 3점슛을 성공시켰습니다!");
-            updateComputerScore(3);
-
-        }else{
-            // 실패시
-            showText("컴퓨터가 3점슛을 실패하였습니다!");
-        }
+    if(Math.random() < computer['percent' + shootType]){
+        showText('컴퓨터가 ' + shootType + "점슛을 성공시켰습니다!")
+        updateComputerScore(shootType);
+    } else {
+        showText('컴퓨터가 ' + shootType + '점슛을 실패했습니다.');
     }
-    isComputerTurn = false;// 컴퓨터가 슛을 쏘고 나면 사용자의 차례로 바꿈
 
-    dusableComputerButtons(true)
+    game.isComputerTurn = false;// 컴퓨터가 슛을 쏘고 나면 사용자의 차례로 바꿈
+
+    disableComputerButtons(true)
     /*
         컴퓨터 측 슛 버튼 엘리먼트들을 돌면서 disabled속서의 값을 'true' 바꿔 주고 동시에
         모든 사용자측 슛 버튼 엘리먼트들의 disabled 속성은 'false'로 풀어 주고 있다.
@@ -134,34 +139,20 @@ const onComputerShoot = () => {
 }
 
 const onUserShoot = (shootType) => {
-    if(isComputerTurn){ 
+    if(game.isComputerTurn){ 
         return;
     }
 
-    if(shootType === 2){ // shootType이 2점슛이면 2,
-        if(Math.random() < userPercent2) {
-            // 2점슛 1/2 확률로 성공
-            showText("사용자가 2점슛을 성공시켰습니다!");
-            updateUserScore(2)
-
-        }else {
-            // 실패 시
-            showText("사용자가 2점슛을 실패하였습니다!");
-        }
-    } else{ // shootType이 3점슛이면 3,
-        if(Math.random() < userPercent3){
-            // 3점슛 1/3확률로 성공
-            showText("사용자가 3점슛을 성공시켰습니다!");
-            updateUserScore(3)
-
-        }else{
-            // 실패시
-            showText("사용자가 3점슛을 실패하였습니다!");
-        }
+    if(Math.random() < user['percent' + shootType]) {
+        showText(shootType + '점슛이 성공했습니다.');
+        updateUserScore(shootType);
+    }else {
+        showText(shootType + '점슛이 실패했습니다.');
     }
-    isComputerTurn = true;
+
+    game.isComputerTurn = true;
     
-    dusableComputerButtons(false)
+    disableComputerButtons(false)
     /*
         앞서와 반대로 'btn-computer'클래스를 가진 엘리먼트들을 가져와서 disabled 속성을
         'false'로 바꿔 주고, 마찬가지로 'btn-user'클래스를 가진 엘리먼트들의 disabled속성은
@@ -169,22 +160,25 @@ const onUserShoot = (shootType) => {
      */
     disableUserButtons(true)
 
-    shotsLeft --;
+    game.shotsLeft --;
     
-    const shotsLeftElem = document.getElementById('shots-left');
-    shotsLeftElem.innerHTML = shotsLeft;
+    // const shotsLeftElem = document.getElementById('shots-left');
+    const $shotLeftElem = $('#shots-left');
 
-    if(shotsLeft === 0){
-        if(userScore > comScore){
+    // shotsLeftElem.innerHTML = game.shotsLeft;
+    $shotLeftElem.html(game.shotsLeft);
+
+    if(game.shotsLeft === 0){
+        if(user.score > computer.score){
             showText('승리했습니다.')
-        }else if(userScore < comScore) {
+        }else if(user.score < computer.score) {
             showText('아쉽게도 졌습니다...')
         }else {
             showText('비겼습니다.')
         }
 
         // 버튼 비활성화
-        dusableComputerButtons(true)
+        disableComputerButtons(true)
 
         // 버튼 비활성화
         disableUserButtons(true)
